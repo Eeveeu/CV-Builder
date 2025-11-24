@@ -26,7 +26,7 @@
 <body>
     <div class="paper">
         <div class="header">
-            <div class="name">{{ $cv['personal']['name'] ?? 'Имя не указано' }}</div>
+            <div class="name">{{ trim(($cv['personal']['surname'] ?? '') . ' ' . ($cv['personal']['name'] ?? '') . ' ' . ($cv['personal']['patronymic'] ?? '')) ?: 'Имя не указано' }}</div>
             <div class="contact">📧 {{ $cv['personal']['email'] ?? '' }} • 📱 {{ $cv['personal']['phone'] ?? '' }} • 📍 {{ $cv['personal']['city'] ?? '' }}</div>
         </div>
         @if(!empty($cv['summary']))

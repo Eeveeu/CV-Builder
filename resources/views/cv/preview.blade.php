@@ -157,7 +157,7 @@
         <div class="preview-wrapper">
             @if (!empty($cv['personal']))
                 <div class="header-section">
-                    <div class="name">{{ $cv['personal']['name'] ?? 'Имя не указано' }}</div>
+                    <div class="name">{{ trim(($cv['personal']['surname'] ?? '') . ' ' . ($cv['personal']['name'] ?? '') . ' ' . ($cv['personal']['patronymic'] ?? '')) ?: 'Имя не указано' }}</div>
                     <div class="contact-info">
                         <span>📧 {{ $cv['personal']['email'] ?? 'email@example.com' }}</span>
                         <span>📱 {{ $cv['personal']['phone'] ?? '+7 (000) 000-00-00' }}</span>

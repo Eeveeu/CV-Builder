@@ -13,7 +13,9 @@ class CVController extends Controller
     {
         $cv = session()->get('cv', [
             'personal' => [
+                'surname' => '',
                 'name' => '',
+                'patronymic' => '',
                 'email' => '',
                 'phone' => '',
                 'city' => ''
@@ -33,13 +35,16 @@ class CVController extends Controller
     {
         // Валидация данных
         $validator = $request->validate([
-            'personal.name' => 'required|string|max:100',
+            'personal.surname' => 'required|string|max:50',
+            'personal.name' => 'required|string|max:50',
+            'personal.patronymic' => 'nullable|string|max:50',
             'personal.email' => 'required|email|max:100',
             'personal.phone' => 'nullable|string|max:20',
             'personal.city' => 'required|string|max:100',
             'summary' => 'nullable|string|max:500',
             'title' => 'nullable|string|max:100',
         ], [
+            'personal.surname.required' => 'Фамилия обязательна',
             'personal.name.required' => 'Имя обязательно',
             'personal.email.required' => 'Email обязателен',
             'personal.email.email' => 'Email должен быть действительным',
@@ -51,7 +56,9 @@ class CVController extends Controller
         // Санитизация данных (защита от XSS)
         $cv = [
             'personal' => [
+                'surname' => strip_tags($data['personal']['surname'] ?? ''),
                 'name' => strip_tags($data['personal']['name'] ?? ''),
+                'patronymic' => strip_tags($data['personal']['patronymic'] ?? ''),
                 'email' => filter_var($data['personal']['email'] ?? '', FILTER_SANITIZE_EMAIL),
                 'phone' => strip_tags($data['personal']['phone'] ?? ''),
                 'city' => strip_tags($data['personal']['city'] ?? '')
@@ -65,8 +72,8 @@ class CVController extends Controller
         ];
 
         // Дополнительная проверка на пустоту
-        if (empty($cv['personal']['name']) || empty($cv['personal']['email'])) {
-            return redirect()->route('cv.index')->withErrors(['personal.name' => 'Имя и email обязательны'])->withInput();
+        if (empty($cv['personal']['surname']) || empty($cv['personal']['name']) || empty($cv['personal']['email'])) {
+            return redirect()->route('cv.index')->withErrors(['personal.name' => 'Фамилия, имя и email обязательны'])->withInput();
         }
 
         session()->put('cv', $cv);
@@ -114,10 +121,12 @@ class CVController extends Controller
     {
         $cv = session()->get('cv', [
             'personal' => [
-                'name' => 'John Doe',
+                'surname' => 'Иванов',
+                'name' => 'Иван',
+                'patronymic' => 'Иванович',
                 'email' => 'john@example.com',
                 'phone' => '+7 (999) 123-45-67',
-                'city' => 'Moscow'
+                'city' => 'Москва'
             ],
             'experience' => [],
             'education' => [],

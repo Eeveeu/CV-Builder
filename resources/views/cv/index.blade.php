@@ -252,8 +252,19 @@
                     
                     <div class="row">
                         <div class="form-group">
-                            <label for="name">Полное имя *</label>
+                            <label for="surname">Фамилия *</label>
+                            <input type="text" id="surname" name="personal[surname]" value="{{ $cv['personal']['surname'] ?? '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Имя *</label>
                             <input type="text" id="name" name="personal[name]" value="{{ $cv['personal']['name'] ?? '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="patronymic">Отчество</label>
+                            <input type="text" id="patronymic" name="personal[patronymic]" value="{{ $cv['personal']['patronymic'] ?? '' }}">
                         </div>
                         <div class="form-group">
                             <label for="email">Email *</label>
@@ -344,32 +355,32 @@
                 <!-- Навыки -->
                 <div class="form-section">
                     <h2>🛠️ Навыки</h2>
-                    
-                    <div class="row">
-                        <div class="form-group">
-                            <label>Навык 1</label>
-                            <input type="text" name="skills[0]" value="{{ old('skills.0', $cv['skills'][0] ?? '') }}" placeholder="Например: PHP">
-                        </div>
-                        <div class="form-group">
-                            <label>Навык 2</label>
-                            <input type="text" name="skills[1]" value="{{ old('skills.1', $cv['skills'][1] ?? '') }}" placeholder="Например: Laravel">
-                        </div>
+                    <div id="skills-list">
+                        @php $skillsList = $cv['skills'] ?? [] @endphp
+                        @if(empty($skillsList))
+                            <div class="skill-item">
+                                <div class="row full">
+                                    <div class="form-group"><label>Навык</label><input type="text" name="skills[0]" placeholder="Например: PHP, Laravel, SQL"></div>
+                                </div>
+                            </div>
+                        @else
+                            @foreach($skillsList as $i => $skill)
+                                <div class="skill-item">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                                        <span style="color:#9aa9c7">Навык #{{ $i + 1 }}</span>
+                                        @if($i > 0)
+                                            <button type="button" class="btn-remove" onclick="removeSkill(this)">❌ Удалить</button>
+                                        @endif
+                                    </div>
+                                    <div class="row full">
+                                        <div class="form-group"><label>Навык</label><input type="text" name="skills[{{ $i }}]" value="{{ $skill }}" placeholder="Например: PHP, Laravel, SQL"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label>Навык 3</label>
-                            <input type="text" name="skills[2]" value="{{ old('skills.2', $cv['skills'][2] ?? '') }}" placeholder="Например: SQL">
-                        </div>
-                        <div class="form-group">
-                            <label>Уровень</label>
-                            <select name="skills_level[0]">
-                                <option>Выберите уровень</option>
-                                <option>Начинающий</option>
-                                <option>Средний</option>
-                                <option>Продвинутый</option>
-                                <option>Эксперт</option>
-                            </select>
-                        </div>
+                    <div style="margin-top:10px">
+                        <button type="button" class="btn-secondary" onclick="addSkill()">➕ Добавить навык</button>
                     </div>
                 </div>
 
@@ -520,6 +531,24 @@
 
         function removeLanguage(btn){
             btn.closest('.lang-item').remove();
+        }
+
+        function addSkill(){
+            const list = document.getElementById('skills-list');
+            const idx = list.querySelectorAll('.skill-item').length;
+            const wrapper = document.createElement('div'); wrapper.className='skill-item';
+            wrapper.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="color:#9aa9c7">Навык #${idx + 1}</span>
+                    <button type="button" class="btn-remove" onclick="removeSkill(this)">❌ Удалить</button>
+                </div>
+                <div class="row full"><div class="form-group"><label>Навык</label><input type="text" name="skills[${idx}]" placeholder="Например: PHP, Laravel, SQL"></div></div>
+            `;
+            list.appendChild(wrapper);
+        }
+
+        function removeSkill(btn){
+            btn.closest('.skill-item').remove();
         }
 
         function addLink(){
