@@ -1,11 +1,16 @@
-FROM php:8.3-fpm
+FROM php:8.3-cli
 
 # Установи необходимые расширения
 RUN apt-get update && apt-get install -y \
-    composer \
     curl \
     sqlite3 \
+    git \
+    zip \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Скачай Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Установи директорию работы
 WORKDIR /app
