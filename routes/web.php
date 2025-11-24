@@ -7,6 +7,11 @@ Route::get('/', function () {
     return redirect()->route('cv.index');
 });
 
+// Простая проверка состояния для хелсчека (Render / health probe)
+Route::match(['GET', 'HEAD'], '/healthz', function () {
+    return response('OK', 200);
+});
+
 Route::prefix('cv')->name('cv.')->group(function () {
     Route::get('/', [CVController::class, 'index'])->name('index');
     Route::post('/store', [CVController::class, 'store'])->name('store');
