@@ -21,12 +21,15 @@ COPY . .
 # Установи зависимости Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Создай необходимые директории
-RUN mkdir -p storage/framework/{cache,sessions,views} database && \
-    chmod -R 755 storage database
+# Создай необходимые директории, включая bootstrap cache
+RUN mkdir -p storage/framework/{cache,sessions,views} database bootstrap/cache && \
+    chmod -R 755 storage database bootstrap/cache
+
+# Добавим entrypoint, который гарантирует наличие .env и APP_KEY и запустит сервер
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Открой порт
 EXPOSE 10000
 
-# Запусти приложение
-CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
