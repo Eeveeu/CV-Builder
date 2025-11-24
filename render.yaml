@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: cv-builder
+    runtime: php
+    buildCommand: "composer install"
+    startCommand: "php -S 0.0.0.0:10000 -t public"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_DRIVER
+        value: file
+      - key: APP_KEY
+        generateValue: true
+    disk:
+      name: cv-data
+      mountPath: /opt/render/project/database
+      sizeGB: 1
